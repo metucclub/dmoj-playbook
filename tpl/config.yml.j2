@@ -1,0 +1,37 @@
+# This is the same ID you specified in the judge admin panel
+id: {{ inventory_hostname }}
+# The key this judge will use to authenticate with the site server, generated from the admin panel
+key: "{{ auth_key }}"
+# Where to look for problems on the local filesystem.
+# This directory /not/ scanned recursively, and any directory containing an init.yml file is assumed to
+# be a problem directory.
+problem_storage_root:
+  - {{ ansible_env.HOME }}/problems
+# All configuration for language executors
+# If you're unsure of what values a language needs, your best bet is to consult the source of the executor:
+# <https://github.com/DMOJ/judge/tree/master/dmoj/executors>
+runtime:
+  as_x64: /usr/bin/x86_64-linux-gnu-as
+  as_x86: /usr/bin/as
+  awk: /usr/bin/mawk
+  cat: /bin/cat
+  g++: /usr/bin/g++
+  g++11: /usr/bin/g++
+  g++14: /usr/bin/g++
+  g++17: /usr/bin/g++
+  gcc: /usr/bin/gcc
+  gcc11: /usr/bin/gcc
+  ghc: /usr/bin/ghc
+  java8: /usr/lib/jvm/java-8-openjdk-amd64/bin/java
+  javac8: /usr/lib/jvm/java-8-openjdk-amd64/bin/javac
+  ld_x64: /usr/bin/x86_64-linux-gnu-ld
+  ld_x86: /usr/bin/ld
+  mono: /usr/bin/mono
+  mono-csc: /usr/bin/mono-csc
+  perl: /usr/bin/perl
+  php: /usr/bin/php
+  python: /usr/bin/python2.7
+  python3: /usr/bin/python3.5
+  ruby2: /usr/bin/ruby2.3
+  sed: /bin/sed
+  v8dmoj: /usr/bin/v8dmoj

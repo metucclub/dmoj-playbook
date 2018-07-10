@@ -1,0 +1,292 @@
+[
+    {
+        "fields": {
+            "access_code": "",
+            "description": "Hello! If you are seeing this, the webserver part of the judge is running.",
+            "end_time": "2023-10-29T00:00:00Z",
+            "hide_problem_tags": false,
+            "hide_scoreboard": true,
+            "is_private": false,
+            "is_public": true,
+            "is_rated": false,
+            "key": "1",
+            "name": "Lopamp-the sweet initial run",
+            "og_image": "",
+            "organizations": [],
+            "organizers": [],
+            "rate_all": false,
+            "rate_exclude": [],
+            "run_pretests_only": false,
+            "start_time": "2018-03-23T20:00:00Z",
+            "summary": "",
+            "tags": [],
+            "time_limit": null,
+            "use_clarifications": true,
+            "user_count": 0
+        },
+        "model": "judge.contest",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "date_joined": "2018-03-23T04:08:06.971Z",
+            "email": "",
+            "first_name": "",
+            "groups": [],
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": true,
+            "last_login": "2018-04-11T19:34:19.665Z",
+            "last_name": "",
+            "password": "pbkdf2_sha256$36000$FRCfoIhGsDuK$AfBjCxnEmOF+KvXv8PqrrMifXLfs5WcvU1K1/6arR4A=",
+            "user_permissions": [],
+            "username": "whirlpool"
+        },
+        "model": "auth.user",
+        "pk": 1
+    },
+
+{# The webserver should know about the auth keys of all judges. #}
+{% for judge in groups["judges"] %}
+    {
+        "fields": {
+            "auth_key": "{{ lookup('password', 'auth/' + hostvars[judge]['inventory_hostname'] + '_auth_key.txt length=50') }}",
+            "description": "a lovely judge server",
+            "created": "2018-04-11T19:34:19.665Z",
+            "load": null,
+            "name": "{{ hostvars[judge]['inventory_hostname'] }}",
+            "online": false,
+            "ping": null,
+            "problems": [],
+            "runtimes": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+        },
+        "model": "judge.judge",
+        "pk": 1
+    },
+{% endfor %}
+
+    {
+        "fields": {
+            "ace": "python",
+            "common_name": "Python",
+            "description": "",
+            "extension": "",
+            "info": "python 2.7.9",
+            "key": "PY2",
+            "name": "Python 2",
+            "pygments": "python",
+            "short_name": "",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "ace": "assembly_x86",
+            "common_name": "Assembly",
+            "description": "",
+            "extension": "",
+            "info": "binutils 2.25",
+            "key": "GAS64",
+            "name": "Assembly (x64)",
+            "pygments": "gas",
+            "short_name": "",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "ace": "AWK",
+            "common_name": "Awk",
+            "description": "",
+            "extension": "",
+            "info": "mawk 1.3.3",
+            "key": "AWK",
+            "name": "AWK",
+            "pygments": "awk",
+            "short_name": "AWK",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "ace": "c_cpp",
+            "common_name": "C",
+            "description": "",
+            "extension": "",
+            "info": "gcc",
+            "key": "C",
+            "name": "C",
+            "pygments": "c",
+            "short_name": null,
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "ace": "c_cpp",
+            "common_name": "C++",
+            "description": "Compile options: `g++ --std=c++03`",
+            "extension": "",
+            "info": "g++ --std=c++03",
+            "key": "CPP03",
+            "name": "C++03",
+            "pygments": "cpp",
+            "short_name": "C++03",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "ace": "c_cpp",
+            "common_name": "C++",
+            "description": "Compile options: `g++ -std=c++11`",
+            "extension": "",
+            "info": "g++ -std=c++11",
+            "key": "CPP11",
+            "name": "C++11",
+            "pygments": "cpp",
+            "short_name": "C++11",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 6
+    },
+    {
+        "fields": {
+            "ace": "perl",
+            "common_name": "Perl",
+            "description": "",
+            "extension": "",
+            "info": "perl 5.10.1",
+            "key": "PERL",
+            "name": "Perl",
+            "pygments": "perl",
+            "short_name": "",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 7
+    },
+    {
+        "fields": {
+            "ace": "python",
+            "common_name": "Python",
+            "description": "",
+            "extension": "",
+            "info": "python 3.4.2",
+            "key": "PY3",
+            "name": "Python 3",
+            "pygments": "python3",
+            "short_name": "",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 8
+    },
+    {
+        "fields": {
+            "ace": "haskell",
+            "common_name": "Haskell",
+            "description": "",
+            "extension": "",
+            "info": "",
+            "key": "HASK",
+            "name": "Haskell",
+            "pygments": "haskell",
+            "short_name": "Haskell",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 9
+    },
+    {
+        "fields": {
+            "ace": "java",
+            "common_name": "Java",
+            "description": "",
+            "extension": "",
+            "info": "",
+            "key": "JAVA8",
+            "name": "Java 8",
+            "pygments": "java",
+            "short_name": "Java 8",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 10
+    },
+    {
+        "fields": {
+            "ace": "csharp",
+            "common_name": "C#",
+            "description": "",
+            "extension": "",
+            "info": "",
+            "key": "MONOCS",
+            "name": "C# (Mono)",
+            "pygments": "csharp",
+            "short_name": "C# (Mono)",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 11
+    },
+    {
+        "fields": {
+            "ace": "php",
+            "common_name": "PHP",
+            "description": "",
+            "extension": "",
+            "info": "",
+            "key": "PHP",
+            "name": "PHP 7",
+            "pygments": "php",
+            "short_name": "PHP 7",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 12
+    },
+    {
+        "fields": {
+            "ace": "ruby",
+            "common_name": "Ruby",
+            "description": "",
+            "extension": "",
+            "info": "",
+            "key": "RUBY2",
+            "name": "Ruby 2.3",
+            "pygments": "ruby",
+            "short_name": "Ruby 2.3",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 13
+    },
+    {
+        "fields": {
+            "ace": "javascript",
+            "common_name": "JavaScript",
+            "description": "",
+            "extension": "",
+            "info": "",
+            "key": "V8JS",
+            "name": "V8 JavaScript",
+            "pygments": "javascript",
+            "short_name": "V8JS",
+            "template": ""
+        },
+        "model": "judge.language",
+        "pk": 14
+    }
+]

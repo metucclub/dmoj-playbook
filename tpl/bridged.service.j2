@@ -1,0 +1,13 @@
+[Unit]
+Description=DMOJ bridge to judge server
+After=syslog.target
+
+[Service]
+ExecStart={{ VENV_DIR }}/bin/python manage.py runbridged
+Type=simple
+WorkingDirectory={{ APP_DIR }}
+User={{ ansible_user_id }}
+Group={{ ansible_user_id }}
+
+[Install]
+WantedBy=multi-user.target

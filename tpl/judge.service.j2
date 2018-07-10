@@ -1,0 +1,12 @@
+[Unit]
+Description=DMOJ judge process
+
+[Service]
+WorkingDirectory={{ JUDGE_DIR }}
+User={{ ansible_user_id }}
+Group={{ ansible_user_id }}
+ExecStart={{ VENV_DIR }}/bin/dmoj -c config.yml {{ webserver_internal_ip }}
+
+[Install]
+# When should this service be triggered? (this is the equivalent of SysV's runlevel 3)
+WantedBy=multi-user.target

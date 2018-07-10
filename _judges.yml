@@ -1,0 +1,102 @@
+- hosts: judges
+
+  vars:
+    JUDGE_DIR: "{{ ansible_env.HOME }}/judge"
+    VENV_DIR: "{{ JUDGE_DIR }}/ENV"
+    auth_key: "{{ lookup('password', 'auth/' + inventory_hostname + '_auth_key.txt length=50') }}"
+
+  vars_files:
+    - _vars.yml
+
+  tasks:
+    - name: install essential apt packages
+      become: yes
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - git
+        - python-dev
+        - python-pip
+        - build-essential
+        - apt-transport-https
+  
+    - name: add gpg key for v8dmoj
+      become: yes
+      apt_key:
+        url: https://dmoj.ca/dmoj-apt.key
+        state: present
+  
+    - name: add apt repository for v8dmoj
+      become: yes
+      apt_repository:
+        repo: "deb https://apt.dmoj.ca/ {{ ansible_distribution_release }} main"
+        state: present
+        update_cache: yes
+  
+    - name: install language packages(coroutine 1)
+      become: yes
+      apt:
+        name: "{{ packages }}"
+        update_cache: yes
+        cache_valid_time: 3600
+      vars:
+        packages:
+        - php7.0-cli
+        - haskell-platform
+        - openjdk-8-jdk
+        - openjdk-8-jre-dcevm
+        - openjdk-8-jre-zero
+        - mono-complete
+        - v8dmoj
+        - ruby
+      async: 10000
+      poll: 0
+      register: lang_packages
+  
+    - name: install virtualenv with pip
+      become: yes
+      pip:
+        name: virtualenv
+  
+    - name: clone judge
+      git:
+        repo: "https://github.com/DMOJ/judge"
+        dest: "{{ JUDGE_DIR }}"
+  
+    - name: install judge's dependencies in the virtualenv(pip will create it)
+      pip:
+        requirements: "{{ JUDGE_DIR }}/requirements.txt"
+        virtualenv: "{{ VENV_DIR }}"
+  
+    - name: pip install judge
+      pip:
+        name: "{{ JUDGE_DIR }}"
+        editable: yes
+        virtualenv: "{{ VENV_DIR }}"
+  
+    - name: write judge's config.yml
+      template:
+        src: tpl/config.yml.j2
+        dest: "{{ JUDGE_DIR }}/config.yml"
+  
+    - name: write judge's systemd service file
+      become: yes
+      template:
+        src: tpl/judge.service.j2
+        dest: /etc/systemd/system/judge.service
+  
+    - name: wait for language packages to finish installing(coroutine 1)
+      become: yes
+      async_status:
+        jid: "{{ lang_packages.ansible_job_id }}"
+      register: r
+      until: r.finished
+      retries: 60
+  
+    - name: restart judge
+      become: yes
+      systemd:
+        name: judge
+        state: restarted
+        daemon_reload: yes
