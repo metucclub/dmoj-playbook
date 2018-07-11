@@ -27,11 +27,15 @@ Vagrant.configure("2") do |config|
 			# Run Ansible once when all machines are ready.
 			# See https://www.vagrantup.com/docs/provisioning/ansible.html
 			if n == N
-				judge.vm.provision "ansible"  do |ansible|
+				config.vm.provision "ansible"  do |ansible|
+					ansible.limit = "all"
 					ansible.playbook = "all.yml"
 					ansible.groups = {
 						"webserver" => ["webserver"],
 						"judges" => (1..N).map {|n| "judge#{n}"}
+					}
+					ansible.extra_vars = {
+						"webserver_internal_ip" => "192.168.33.10"
 					}
 				end
 			end
