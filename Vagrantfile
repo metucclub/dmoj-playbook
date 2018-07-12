@@ -7,15 +7,18 @@ Vagrant.configure("2") do |config|
 	# For a complete reference, please see the online documentation at
 	# https://docs.vagrantup.com.
 
-	config.vm.provider "virtualbox" do |vb|
-		vb.memory = "512"
-	end
-
 	config.vm.define "webserver" do |ws|
 		ws.vm.box = "debian/contrib-stretch64"
+		ws.vm.provider "virtualbox" do |vb|
+			vb.memory = "512"
+			vb.customize ["modifyvm", :id, "--cpuexecutioncap", 30]
+			vb.customize ["storagectl", :id, "--name", "SATA Controller",
+				"--hostiocache", "off"]
+		end
+
 		ws.vm.hostname = "webserver"
 		ws.vm.network "private_network", ip: "192.168.33.10",
-			virtualbox__intnet: True
+			virtualbox__intnet: true
 		ws.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
 	end
 
@@ -23,9 +26,17 @@ Vagrant.configure("2") do |config|
 	(1..N).each do |n|
 		config.vm.define "judge#{n}" do |judge|
 			judge.vm.box = "debian/contrib-stretch64"
+			judge.vm.provider "virtualbox" do |vb|
+				vb.memory = "512"
+				vb.customize ["modifyvm", :id, "--cpuexecutioncap", 30/N]
+				vb.customize ["storagectl", :id, "--name", "SATA Controller",
+						"--hostiocache", "off"]
+			end
+
 			judge.vm.hostname = "judge#{n}"
 			judge.vm.network "private_network", ip: "192.168.33.#{n+10}",
-				virtualbox__intnet: True
+				virtualbox__intnet: true
+
 			# Run Ansible once when all machines are ready.
 			# See https://www.vagrantup.com/docs/provisioning/ansible.html
 			if n == N
