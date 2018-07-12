@@ -14,7 +14,8 @@ Vagrant.configure("2") do |config|
 	config.vm.define "webserver" do |ws|
 		ws.vm.box = "debian/contrib-stretch64"
 		ws.vm.hostname = "webserver"
-		ws.vm.network "private_network", ip: "192.168.33.10"
+		ws.vm.network "private_network", ip: "192.168.33.10",
+			virtualbox__intnet: True
 		ws.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
 	end
 
@@ -23,11 +24,12 @@ Vagrant.configure("2") do |config|
 		config.vm.define "judge#{n}" do |judge|
 			judge.vm.box = "debian/contrib-stretch64"
 			judge.vm.hostname = "judge#{n}"
-			judge.vm.network "private_network", ip: "192.168.33.#{n+10}"	
+			judge.vm.network "private_network", ip: "192.168.33.#{n+10}",
+				virtualbox__intnet: True
 			# Run Ansible once when all machines are ready.
 			# See https://www.vagrantup.com/docs/provisioning/ansible.html
 			if n == N
-				config.vm.provision "ansible"  do |ansible|
+				judge.vm.provision "ansible"  do |ansible|
 					ansible.limit = "all"
 					ansible.playbook = "all.yml"
 					ansible.groups = {
