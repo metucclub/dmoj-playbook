@@ -12,8 +12,6 @@ Vagrant.configure("2") do |config|
 		ws.vm.provider "virtualbox" do |vb|
 			vb.memory = "512"
 			vb.customize ["modifyvm", :id, "--cpuexecutioncap", 30]
-			vb.customize ["storagectl", :id, "--name", "SATA Controller",
-				"--hostiocache", "off"]
 		end
 
 		ws.vm.hostname = "webserver"
@@ -29,8 +27,6 @@ Vagrant.configure("2") do |config|
 			judge.vm.provider "virtualbox" do |vb|
 				vb.memory = "512"
 				vb.customize ["modifyvm", :id, "--cpuexecutioncap", 30/N]
-				vb.customize ["storagectl", :id, "--name", "SATA Controller",
-						"--hostiocache", "off"]
 			end
 
 			judge.vm.hostname = "judge#{n}"
@@ -48,7 +44,8 @@ Vagrant.configure("2") do |config|
 						"judges" => (1..N).map {|n| "judge#{n}"}
 					}
 					ansible.extra_vars = {
-						"webserver_internal_ip" => "192.168.33.10"
+						"webserver_internal_ip" => "192.168.33.10",
+						"server_name" => "127.0.0.1"
 					}
 				end
 			end

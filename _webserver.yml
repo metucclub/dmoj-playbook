@@ -105,16 +105,6 @@
         global: yes
         production: yes
 
-    - name: generate and collect static assets(coroutine 2)
-      shell: |
-        {{ APP_DIR }}/make_style.sh &&
-        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilemessages &&
-        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilejsi18n &&
-        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py collectstatic --no-input
-      async: 10000
-      poll: 0
-      register: gen_static
-
     - name: write dmoj's local settings config
       template:
         src: tpl/local_settings.py.j2
@@ -155,6 +145,16 @@
       register: r
       until: r.finished
       retries: 60
+
+    - name: generate and collect static assets(coroutine 2)
+      shell: |
+        {{ APP_DIR }}/make_style.sh &&
+        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilemessages &&
+        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilejsi18n &&
+        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py collectstatic --no-input
+      async: 10000
+      poll: 0
+      register: gen_static
 
     - name: restart nginx
       become: yes

@@ -2,7 +2,7 @@ server {
 	listen	   80;
 	listen	   [::]:80;
 
-	server_name {{ ansible_eth0.ipv4.address }};
+	server_name {{ server_name }};
 
 	add_header X-UA-Compatible "IE=Edge,chrome=1";
 	add_header X-Content-Type-Options nosniff;

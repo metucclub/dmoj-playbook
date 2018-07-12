@@ -28,5 +28,5 @@ The scripts are relatively simple. We have this TODO though:
 - [ ] Allow specifying actual judge names instead of hostnames/IP addresses
 - [ ] Use the Ansible directory structure everyone uses
 - [ ] Fix async task dependencies:
-	- [ ] generating assets depend on some Python modules which are not guaranteed to install before they run
+	- [X] generating assets depend on some Python modules which are not guaranteed to install before they run
 	- [ ] Preferably, some other program should fix this whole async thing.

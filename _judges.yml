@@ -43,7 +43,7 @@
       vars:
         packages:
         - php7.0-cli
-        - haskell-platform
+        - ghc
         - openjdk-8-jdk
         - openjdk-8-jre-dcevm
         - openjdk-8-jre-zero
@@ -92,7 +92,7 @@
         jid: "{{ lang_packages.ansible_job_id }}"
       register: r
       until: r.finished
-      retries: 60
+      retries: 999
   
     - name: restart judge
       become: yes
