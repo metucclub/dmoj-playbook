@@ -173,11 +173,12 @@
     - name: load initial fixture into django
       command: "{{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py loaddata initial"
 
-    - name: restart dmoj services dmoj_site, bridged, wsevent
+    - name: restart&enable dmoj services dmoj_site, bridged, wsevent
       become: yes
       systemd:
         name: "{{ item }}"
         state: restarted
+        enabled: yes
         daemon_reload: yes
       with_items:
         - dmoj_site

@@ -94,9 +94,10 @@
       until: r.finished
       retries: 999
   
-    - name: restart judge
+    - name: restart&enable judge
       become: yes
       systemd:
         name: judge
         state: restarted
+        enabled: yes
         daemon_reload: yes
