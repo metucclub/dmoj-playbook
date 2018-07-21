@@ -1,3 +1,7 @@
+[all:vars]
+webserver_internal_ip=127.0.0.1
+server_name=127.0.0.1
+
 [webserver]
 127.0.0.1
 

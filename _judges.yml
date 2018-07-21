@@ -5,9 +5,6 @@
     VENV_DIR: "{{ JUDGE_DIR }}/ENV"
     auth_key: "{{ lookup('password', 'auth/' + inventory_hostname + '_auth_key.txt length=50') }}"
 
-  vars_files:
-    - _vars.yml
-
   tasks:
     - name: install essential apt packages
       become: yes

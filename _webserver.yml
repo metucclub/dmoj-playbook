@@ -7,9 +7,6 @@
     db_passwd: "{{ lookup('password', 'auth/db_passwd.txt') }}"
     django_secret_key: "{{ lookup('password', 'auth/django_secret_key.txt length=50') }}"
 
-  vars_files:
-    - _vars.yml
-
   tasks:
     - name: add gpg key for nodejs
       become: yes

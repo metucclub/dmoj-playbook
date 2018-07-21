@@ -6,12 +6,10 @@ A set of Ansible playbooks to deploy DMOJ webservers and judges.
 
 You need [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) first(duh).
 
-There are two files to tweak before running:
-
-- `hosts`: State your webserver and judges' IPs or hostnames here. Hostvars should be specified for judges, in the form of `10.5.6.7 judge_name=dummy`.
-- `_vars.yml`: This file has two `var`s.
-	- `webserver_internal_ip` is the IP address the DMOJ bridge daemon should listen on. If the webserver is on the same machine with the judge, this is `127.0.0.1`. Otherwise you would want to configure an internal network containing the webserver and the judges and point `webserver_internal_ip` to the webserver's address on that network.
-	- `server_name` defines the `server_name` directive for Nginx and the single item in `ALLOWED_HOSTS` for Django.
+Tweak the `hosts` file before running:
+- `webserver_internal_ip` is the IP address the DMOJ bridge daemon should listen on. If the webserver is on the same machine with the judge, this is `127.0.0.1`. Otherwise you would want to configure an internal network containing the webserver and the judges and point `webserver_internal_ip` to the webserver's address on that network.
+- `server_name` defines the `server_name` directive for Nginx and the single item in `ALLOWED_HOSTS` for Django.
+- Rest of the file: State your webserver and judges' IPs or hostnames here. Hostvars should be specified for judges, in the form of `10.5.6.7 judge_name=dummy`.
 
 Run with `ansible-playbook -i hosts all.yml`.
 
