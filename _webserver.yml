@@ -2,7 +2,7 @@
 
   vars:
     HOME: "{{ ansible_env.HOME }}"
-    APP_DIR: "{{ HOME }}/lopamp"
+    APP_DIR: "{{ HOME }}/site"
     VENV_DIR: "{{ APP_DIR }}/ENV"
     db_passwd: "{{ lookup('password', 'auth/db_passwd.txt') }}"
     django_secret_key: "{{ lookup('password', 'auth/django_secret_key.txt length=50') }}"
@@ -68,7 +68,7 @@
 
     - name: clone our fork of dmoj
       git:
-        repo: "https://github.com/metucclub/lopamp"
+        repo: "https://github.com/duck2/site"
         dest: "{{ APP_DIR }}"
 
     - name: install virtualenv with pip
@@ -146,7 +146,7 @@
     - name: generate and collect static assets(coroutine 2)
       shell: |
         {{ APP_DIR }}/make_style.sh &&
-        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilemessages &&
+        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilemessages -l tr -l en &&
         {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilejsi18n &&
         {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py collectstatic --no-input
       async: 10000

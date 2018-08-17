@@ -30,3 +30,5 @@ The scripts are relatively simple. We have this TODO though:
 	- [X] generating assets depend on some Python modules which are not guaranteed to install before they run
 	- [ ] Preferably, some other program should fix this whole async thing.
 - [ ] Ensure idempotency on tasks
+
+

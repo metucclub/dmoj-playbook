@@ -3,10 +3,6 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-	# The most common configuration options are documented and commented below.
-	# For a complete reference, please see the online documentation at
-	# https://docs.vagrantup.com.
-
 	config.vm.define "webserver" do |ws|
 		ws.vm.box = "debian/contrib-stretch64"
 		ws.vm.provider "virtualbox" do |vb|
@@ -18,9 +14,17 @@ Vagrant.configure("2") do |config|
 		ws.vm.network "private_network", ip: "192.168.33.10",
 			virtualbox__intnet: true
 		ws.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+
+		# Mount site under ./site/. Useful for development.
+		# Note that this creates problems if:
+		# * package nfs-kernel-server(on Debian) is not installed.
+		# * the rpc-statd service is not started.
+		ws.vm.network "private_network", ip: "192.168.71.13"
+		ws.vm.synced_folder "site/", "/home/vagrant/site/", type: "nfs",
+			linux__nfs_options: ["rw", "no_subtree_check", "all_squash", "async"]
 	end
 
-	N = 3
+	N = 1
 	(1..N).each do |n|
 		config.vm.define "judge#{n}" do |judge|
 			judge.vm.box = "debian/contrib-stretch64"
@@ -47,6 +51,9 @@ Vagrant.configure("2") do |config|
 						"webserver_internal_ip" => "192.168.33.10",
 						"server_name" => "127.0.0.1"
 					}
+					(1..N).each do |n|
+						ansible.host_vars["judge#{n}"] = {"judge_name": "judge#{n}"}
+					end
 				end
 			end
 		end
