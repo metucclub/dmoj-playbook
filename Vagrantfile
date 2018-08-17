@@ -51,6 +51,7 @@ Vagrant.configure("2") do |config|
 						"webserver_internal_ip" => "192.168.33.10",
 						"server_name" => "127.0.0.1"
 					}
+					ansible.host_vars = {}
 					(1..N).each do |n|
 						ansible.host_vars["judge#{n}"] = {"judge_name": "judge#{n}"}
 					end
