@@ -59,4 +59,22 @@ Vagrant.configure("2") do |config|
 			end
 		end
 	end
+
+# If no judge VM is specified, install the judge in the same VM.
+	if N == 0
+		config.vm.provision "ansible" do |ansible|
+			ansible.playbook = "all.yml"
+			ansible.groups = {
+				"webserver" => ["webserver"],
+				"judges" => ["webserver"]
+			}
+			ansible.extra_vars = {
+				"webserver_internal_ip" => "127.0.0.1",
+				"server_name" => "127.0.0.1"
+			}
+			ansible.host_vars = {
+				"webserver" => {"judge_name": "self_server"}
+			}
+		end
+	end
 end
