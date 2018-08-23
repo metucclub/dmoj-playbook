@@ -94,14 +94,6 @@
         executable: /usr/bin/npm --no-save
         path: "{{ APP_DIR }}"
 
-    - name: install pleeease-cli (--unsafe-perm because installing node-sass globally is buggy)
-      become: yes
-      npm:
-        executable: /usr/bin/npm --unsafe-perm=true
-        name: pleeease-cli
-        global: yes
-        production: yes
-
     - name: write dmoj's local settings config
       template:
         src: tpl/local_settings.py.j2

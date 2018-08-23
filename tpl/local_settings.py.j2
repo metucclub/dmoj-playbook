@@ -24,14 +24,13 @@ DATABASES = {
     }
 }
 
-# See <https://docs.djangoproject.com/en/1.11/ref/settings/>
-# for more info and help. If you are stuck, you can try Googling about
-# Django - many of these settings below have external documentation about them.
-#
-# The settings listed here are of special interest in configuring the site.
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False  # Change to False once you are done with runserver testing.
+
+## DMOJ site display settings.
+SITE_NAME = u'CClub Yarışma Arşivi'
+SITE_LONG_NAME = u'CClub Yarışma Arşivi'
+SITE_ADMIN_EMAIL = 'cclub@metu.edu.tr'
+TERMS_OF_SERVICE_URL = '//dmoj.ca/tos' # Use a flatpage. XXX: make our own terms of service
 
 # Uncomment and set to the domain names this site is intended to serve.
 # You must do this once you set DEBUG to False.
@@ -73,43 +72,24 @@ COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.JSMinFilter']
 COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
 STATICFILES_FINDERS += ('compressor.finders.CompressorFinder',)
 
+USE_RECAPTCHA = False
+RECAPTCHA_PUBLIC_KEY = ""
+RECAPTCHA_PRIVATE_KEY = ""
+if USE_RECAPTCHA: INSTALLED_APPS += ("snowpenguin.django.recaptcha2",)
 
-#########################################
-########## Email configuration ##########
-#########################################
-# See <https://docs.djangoproject.com/en/1.11/topics/email/#email-backends>
-# for more documentation. You should follow the information there to define 
-# your email settings.
+USE_MAILGUN = False
+MAILGUN_API_KEY = ""
+MAILGUN_SENDER_DOMAIN = ""
+if USE_MAILGUN:
+	EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+	DEFAULT_FROM_EMAIL = u"{name} <noreply@{domain}>".format(name=SITE_NAME, domain=MAILGUN_SENDER_DOMAIN)
+else:
+	EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend" # Useful for testing.
 
-# Use this if you are just testing.
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# The following block is included for your convenience, if you want 
-# to use Gmail.
-#EMAIL_USE_TLS = True
-#EMAIL_HOST = 'smtp.gmail.com'
-#EMAIL_HOST_USER = '<your account>@gmail.com'
-#EMAIL_HOST_PASSWORD = '<your password>'
-#EMAIL_PORT = 587
+ADMINS = ("cclub@metu.edu.tr",)
 
-# To use Mailgun, uncomment this block.
-# You will need to run `pip install django-mailgun` for to get `MailgunBackend`.
-#EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-#MAILGUN_ACCESS_KEY = '<your Mailgun access key>'
-#MAILGUN_SERVER_NAME = '<your Mailgun domain>'
-
-# You can also use Sendgrid, with `pip install sendgrid-django`.
-#EMAIL_BACKEND = 'sgbackend.SendGridBackend'
-#SENDGRID_API_KEY = '<Your SendGrid API Key>'
-
-# The DMOJ site is able to notify administrators of errors via email,
-# if configured as shown below.
-
-# A tuple of (name, email) pairs that specifies those who will be mailed
-# when the server experiences an error when DEBUG = False.
-ADMINS = ()
-
-# The sender for the aforementioned emails.
+# The sender for the admin error email.
 SERVER_EMAIL = 'Don Mills Online Judge <errors@dmoj.ca>'
 
 ##################################################
