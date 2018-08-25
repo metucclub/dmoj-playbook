@@ -1,9 +1,9 @@
 [all:vars]
 webserver_internal_ip=127.0.0.1
-server_name=127.0.0.1
+server_name=172.104.138.100
 
 [webserver]
-127.0.0.1
+darwin ansible_user=whirlpool
 
 [judges]
-127.0.0.1 judge_name=mano
+darwin ansible_user=whirlpool judge_name=mano

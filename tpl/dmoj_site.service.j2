@@ -4,7 +4,7 @@ Description=DMOJ website(served with gunicorn)
 [Service]
 Environment="DJANGO_SETTINGS_MODULE=dmoj.settings"
 WorkingDirectory={{ APP_DIR }}
-ExecStart={{ VENV_DIR }}/bin/gunicorn --workers 3 --bind unix:/tmp/dmoj_site.sock dmoj.wsgi
+ExecStart={{ VENV_DIR }}/bin/gunicorn --workers 3 --timeout 300 --bind unix:/tmp/dmoj_site.sock dmoj.wsgi
 Restart=always
 
 [Install]

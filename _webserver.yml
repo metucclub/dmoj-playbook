@@ -52,7 +52,7 @@
         - python-mysqldb
         - nginx
 
-    - name: dmoj's mysql database should exist(with 3 byte utf8 :( )
+    - name: mysql database dmoj should exist(with 3 byte utf8 :( )
       become: yes
       mysql_db:
         name: dmoj
@@ -81,20 +81,20 @@
         name: gunicorn
         virtualenv: "{{ VENV_DIR }}"
 
-    - name: install dmoj's dependencies in the virtualenv(coroutine 1)
+    - name: install pip dependencies in the virtualenv(coroutine 1)
       pip:
         requirements: "{{ APP_DIR }}/requirements.txt"
         virtualenv: "{{ VENV_DIR }}"
       async: 10000
       poll: 0
-      register: dmoj_deps
+      register: pip_deps
 
-    - name: install npm modules for event server(--no-save because it randomly places a package.json)
+    - name: install npm dependencies(--no-save because it randomly places a package.json)
       npm:
         executable: /usr/bin/npm --no-save
         path: "{{ APP_DIR }}"
 
-    - name: write dmoj's local settings config
+    - name: write local_settings.py
       template:
         src: tpl/local_settings.py.j2
         dest: "{{ APP_DIR }}/dmoj/local_settings.py"
@@ -125,19 +125,18 @@
     - name: write nginx config
       become: yes
       template:
-        src: tpl/lopamp.conf.j2
-        dest: /etc/nginx/conf.d/lopamp.conf
+        src: tpl/dmoj_site.conf.j2
+        dest: /etc/nginx/conf.d/dmoj_site.conf
 
-    - name: wait for dmoj's dependencies to finish installing(coroutine 1)
+    - name: wait for pip dependencies to finish installing(coroutine 1)
       async_status:
-        jid: "{{ dmoj_deps.ansible_job_id }}"
+        jid: "{{ pip_deps.ansible_job_id }}"
       register: r
       until: r.finished
       retries: 60
 
     - name: generate and collect static assets(coroutine 2)
       shell: |
-        {{ APP_DIR }}/make_style.sh &&
         {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilemessages -l tr -l en &&
         {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilejsi18n &&
         {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py collectstatic --no-input
@@ -162,7 +161,7 @@
     - name: load initial fixture into django
       command: "{{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py loaddata initial"
 
-    - name: restart&enable dmoj services dmoj_site, bridged, wsevent
+    - name: restart&enable dmoj_site, bridged, wsevent
       become: yes
       systemd:
         name: "{{ item }}"

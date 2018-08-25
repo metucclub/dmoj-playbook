@@ -62,15 +62,25 @@ USE_L10N = True
 USE_TZ = True
 
 ## django-compressor settings, for speeding up page load times by minifying CSS and JavaScript files.
+# Uses django-compress-postcss to run autoprefixer and django-sass-processor to process SASS.
 # Documentation: https://django-compressor.readthedocs.io/en/latest/
-COMPRESS_OUTPUT_DIR = 'cache'
+# https://github.com/Fueled/django-init/wiki/SASS-support-using-django-compressor
+COMPRESS_POSTCSS_BINARY = "{{ APP_DIR }}/node_modules/.bin/postcss"
+COMPRESS_POSTCSS_PLUGINS = ["autoprefixer"]
 COMPRESS_CSS_FILTERS = [
+    'compressor_postcss.PostCSSFilter',
     'compressor.filters.css_default.CssAbsoluteFilter',
     'compressor.filters.cssmin.CSSMinFilter',
 ]
+
 COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.JSMinFilter']
+
+COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
-STATICFILES_FINDERS += ('compressor.finders.CompressorFinder',)
+STATICFILES_FINDERS += [
+	'compressor.finders.CompressorFinder',
+	'sass_processor.finders.CssFinder',
+]
 
 USE_RECAPTCHA = False
 RECAPTCHA_PUBLIC_KEY = ""
