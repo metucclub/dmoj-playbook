@@ -77,10 +77,10 @@ COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.JSMinFilter']
 
 COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
-STATICFILES_FINDERS += [
+STATICFILES_FINDERS += (
 	'compressor.finders.CompressorFinder',
 	'sass_processor.finders.CssFinder',
-]
+)
 
 USE_RECAPTCHA = False
 RECAPTCHA_PUBLIC_KEY = ""
