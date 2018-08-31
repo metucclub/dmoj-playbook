@@ -15,7 +15,7 @@ Run with `ansible-playbook -i hosts all.yml`.
 
 ### run with Vagrant
 
-If you have Vagrant, you can test the playbook on your own computer with VMs: one webserver and `N` judge servers. `N` is 1 by default. You can change `N` from the `Vagrantfile`. If you set N=0 then there will still be a judge but it will be configured inside the webserver.
+If you have Vagrant, you can test the playbook on your own computer with VMs: one webserver and `N` judge servers. `N` is 1 by default. You can change `N` from the `Vagrantfile`. If you set `N=0` then there will still be a judge but it will be configured inside the webserver.
 
 Navigate to `dmoj-playbook` directory and run the command `mkdir site`. Run `vagrant up`, wait for the process to finish, then navigate to [127.0.0.1:8080](http://127.0.0.1:8080).
 
