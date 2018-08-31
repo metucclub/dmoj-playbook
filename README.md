@@ -15,18 +15,10 @@ Run with `ansible-playbook -i hosts all.yml`.
 
 ### run with Vagrant
 
-If you have Vagrant, ~10G of disk space and  >4GB of RAM you can test the playbook on your own computer with VMs: one webserver and `N` judge servers. `N` is 3 by default, but it is advised to reduce it on a computer(see the `Vagrantfile`) which is not a i7 16GB development laptop.
+If you have Vagrant, you can test the playbook on your own computer with VMs: one webserver and `N` judge servers. `N` is 1 by default. You can change N from the `Vagrantfile`. If you set N=0 then there will still be a judge but it will be configured inside the webserver.
 
-Run `vagrant up`, wait for 30-60 minutes, then navigate to [127.0.0.1:8080](http://127.0.0.1:8080).
+Navigate to `dmoj-playbook` directory and run the command `mkdir site`. Run `vagrant up`, wait for the process to finish, then navigate to [127.0.0.1:8080](http://127.0.0.1:8080).
 
 ### contribute
 
-The scripts are relatively simple. We have this TODO though:
-
-- [ ] Create separate users for bridged, gunicorn, ...
-- [X] Allow specifying actual judge names instead of hostnames/IP addresses
-- [ ] Use the Ansible directory structure everyone uses
-- [ ] Fix async task dependencies:
-	- [X] generating assets depend on some Python modules which are not guaranteed to install before they run
-	- [ ] Preferably, some other program should fix this whole async thing.
-- [ ] Ensure idempotency on tasks
+To contribute, check out issues. 
