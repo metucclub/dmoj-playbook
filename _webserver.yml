@@ -66,6 +66,18 @@
         priv: "dmoj.*:ALL"
         password: "{{ db_passwd }}"
 
+    - command: mysql -NBe "SELECT COUNT(*) FROM mysql.time_zone"
+      become: yes
+      register: mysql_timezones_count
+      changed_when: false
+      check_mode: no
+    
+    - name: ensure mysql timezone data is imported
+      become: yes
+      shell: "mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql mysql"
+      when: mysql_timezones_count.stdout|int < 1
+      notify: restart mysql
+
     - name: clone our fork of dmoj
       git:
         repo: "https://github.com/duck2/site"
@@ -94,39 +106,45 @@
         executable: /usr/bin/npm --no-save
         path: "{{ APP_DIR }}"
 
-    - name: write local_settings.py
-      template:
-        src: tpl/local_settings.py.j2
-        dest: "{{ APP_DIR }}/dmoj/local_settings.py"
-
     - name: write service file for dmoj_site
       become: yes
       template:
         src: tpl/dmoj_site.service.j2
         dest: /etc/systemd/system/dmoj_site.service
+      notify: restart dmoj_site
+
+    - name: write local_settings.py
+      template:
+        src: tpl/local_settings.py.j2
+        dest: "{{ APP_DIR }}/dmoj/local_settings.py"
+      notify: restart dmoj_site
 
     - name: write service file for bridged
       become: yes
       template:
         src: tpl/bridged.service.j2
         dest: /etc/systemd/system/bridged.service
+      notify: restart bridged
 
     - name: write service file for wsevent
       become: yes
       template:
         src: tpl/wsevent.service.j2
         dest: /etc/systemd/system/wsevent.service
+      notify: restart wsevent
 
     - name: write event server's own config
       template:
         src: tpl/config.js.j2
         dest: "{{ APP_DIR }}/websocket/config.js"
+      notify: restart wsevent
 
     - name: write nginx config
       become: yes
       template:
         src: tpl/dmoj_site.conf.j2
         dest: /etc/nginx/conf.d/dmoj_site.conf
+      notify: restart nginx
 
     - name: wait for pip dependencies to finish installing(coroutine 1)
       async_status:
@@ -144,12 +162,6 @@
       poll: 0
       register: gen_static
 
-    - name: restart nginx
-      become: yes
-      systemd:
-        name: nginx
-        state: restarted
-
     - name: do the database migrations
       command: "{{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py migrate --noinput"
 
@@ -160,18 +172,6 @@
 
     - name: load initial fixture into django
       command: "{{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py loaddata initial"
-
-    - name: restart&enable dmoj_site, bridged, wsevent
-      become: yes
-      systemd:
-        name: "{{ item }}"
-        state: restarted
-        enabled: yes
-        daemon_reload: yes
-      with_items:
-        - dmoj_site
-        - bridged
-        - wsevent
       
     - name: wait for static assets to finish generating(coroutine 2)
       async_status:
@@ -179,3 +179,36 @@
       register: r
       until: r.finished
       retries: 60
+
+  handlers:
+    - name: restart mysql
+      become: yes
+      systemd:
+        name: mysql
+        state: restarted
+        enabled: yes
+        daemon_reload: yes
+
+    - name: restart dmoj_site
+      become: yes
+      systemd:
+        name: dmoj_site
+        state: restarted
+        enabled: yes
+        daemon_reload: yes
+
+    - name: restart bridged
+      become: yes
+      systemd:
+        name: bridged
+        state: restarted
+        enabled: yes
+        daemon_reload: yes
+
+    - name: restart wsevent
+      become: yes
+      systemd:
+        name: wsevent
+        state: restarted
+        enabled: yes
+        daemon_reload: yes
