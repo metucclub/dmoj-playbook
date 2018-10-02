@@ -196,21 +196,19 @@
       shell: "{{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py collectstatic --no-input"
 
   handlers:
-    - name: restart mysql
-      become: yes
-      systemd:
-        name: mysql
-        state: restarted
-        enabled: yes
-        daemon_reload: yes
-
     - name: restart nginx
       become: yes
       systemd:
         name: nginx
         state: restarted
         enabled: yes
-        daemon_reload: yes
+
+    - name: restart mysql
+      become: yes
+      systemd:
+        name: mysql
+        state: restarted
+        enabled: yes
 
     - name: restart dmoj_site
       become: yes
