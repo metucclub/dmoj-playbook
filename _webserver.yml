@@ -101,10 +101,13 @@
       poll: 0
       register: pip_deps
 
-    - name: install npm dependencies(--no-save because it randomly places a package.json)
+    - name: install npm dependencies(coroutine 2)
       npm:
         executable: /usr/bin/npm --no-save
         path: "{{ APP_DIR }}"
+      async: 10000
+      poll: 0
+      register: npm_deps
 
     - name: write service file for dmoj_site
       become: yes
@@ -153,15 +156,6 @@
       until: r.finished
       retries: 60
 
-    - name: generate and collect static assets(coroutine 2)
-      shell: |
-        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilemessages -l tr -l en &&
-        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilejsi18n &&
-        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py collectstatic --no-input
-      async: 10000
-      poll: 0
-      register: gen_static
-
     - name: do the database migrations
       command: "{{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py migrate --noinput"
 
@@ -172,19 +166,48 @@
 
     - name: load initial fixture into django
       command: "{{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py loaddata initial"
-      
-    - name: wait for static assets to finish generating(coroutine 2)
+
+    - name: compile gettext messages(coroutine 3)
+      shell: |
+        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilemessages -l tr -l en &&
+        {{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py compilejsi18n
+      async: 10000
+      poll: 0
+      register: gettext_messages
+
+    - name: wait for npm dependencies to finish installing(coroutine 2)
       async_status:
-        jid: "{{ gen_static.ansible_job_id }}"
+        jid: "{{ npm_deps.ansible_job_id }}"
       register: r
       until: r.finished
       retries: 60
+
+    - name: build css files
+      shell: "npm run --prefix {{ APP_DIR }} build:css"
+
+    - name: wait for gettext messages to compile(coroutine 3)
+      async_status:
+        jid: "{{ npm_deps.ansible_job_id }}"
+      register: r
+      until: r.finished
+      retries: 60
+
+    - name: collect static assets
+      shell: "{{ VENV_DIR }}/bin/python {{ APP_DIR }}/manage.py collectstatic --no-input"
 
   handlers:
     - name: restart mysql
       become: yes
       systemd:
         name: mysql
+        state: restarted
+        enabled: yes
+        daemon_reload: yes
+
+    - name: restart nginx
+      become: yes
+      systemd:
+        name: nginx
         state: restarted
         enabled: yes
         daemon_reload: yes
